@@ -1,3 +1,6 @@
+import { useEffect, useRef } from 'react';
+import Chart from 'chart.js/auto';
+
 const CryptoCharts = () => {
   const charts = [
     {
@@ -6,7 +9,7 @@ const CryptoCharts = () => {
       price: '$42,890.12',
       change: '+2.34%',
       changeColor: 'text-green-500',
-      logo: 'https://cryptologos.cc/logos/bitcoin-btc-logo.png',
+      logo: '/Bitcoin.png',
     },
     {
       name: 'Ethereum',
@@ -14,9 +17,55 @@ const CryptoCharts = () => {
       price: '$2,345.67',
       change: '+1.78%',
       changeColor: 'text-green-500',
-      logo: 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
+      logo: '/Mining.png',
     },
   ];
+
+  const chartRefs = useRef<(HTMLCanvasElement | null)[]>([]);
+
+  useEffect(() => {
+    charts.forEach((_, index) => {
+      const canvas = chartRefs.current[index];
+      if (!canvas) return;
+
+      const existingChart = Chart.getChart(canvas);
+      if (existingChart) existingChart.destroy();
+
+      new Chart(canvas, {
+        type: 'line',
+        data: {
+          labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          datasets: [
+            {
+              label: charts[index].symbol,
+              data: [42000, 42500, 43000, 42900, 44000, 44200, 42890],
+              borderColor: '#6366f1',
+              backgroundColor: 'rgba(99, 102, 241, 0.2)',
+              fill: true,
+              tension: 0.4,
+            },
+          ],
+        },
+        options: {
+          plugins: {
+            legend: {
+              display: false,
+            },
+          },
+          scales: {
+            x: {
+              ticks: { color: '#9ca3af' },
+              grid: { display: false },
+            },
+            y: {
+              ticks: { color: '#9ca3af' },
+              grid: { color: '#374151' },
+            },
+          },
+        },
+      });
+    });
+  }, []);
 
   const timeframes = ['1D', '1W', '1M', '3M', '1Y', 'ALL'];
 
@@ -30,7 +79,7 @@ const CryptoCharts = () => {
           </p>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {charts.map((chart) => (
+          {charts.map((chart, index) => (
             <div
               key={chart.symbol}
               className="p-6 shadow-lg rounded-xl bg-gray-800/70 backdrop-blur-md"
@@ -47,9 +96,12 @@ const CryptoCharts = () => {
                   <div className={`${chart.changeColor} text-sm font-medium`}>{chart.change}</div>
                 </div>
               </div>
-              <div className="w-full h-64 bg-gray-800 rounded-lg flex items-center justify-center">
-                <i className="fas fa-chart-line text-4xl text-indigo-500"></i>
-                <p className="ml-4 text-gray-400">Interactive chart would appear here</p>
+              <div className="w-full h-64">
+                <canvas
+                  ref={((el: HTMLCanvasElement | null) => {
+                    chartRefs.current[index] = el;
+                  }) as React.Ref<HTMLCanvasElement>}
+                />
               </div>
               <div className="flex justify-between mt-4">
                 {timeframes.map((t) => (
@@ -69,5 +121,4 @@ const CryptoCharts = () => {
   );
 };
 
-export default CryptoCharts;
- 
+export default CryptoCharts; 

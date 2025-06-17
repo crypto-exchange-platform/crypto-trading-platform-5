@@ -12,18 +12,18 @@ import Testimonials from "./Testimonials";
 function LandingPage() {
   return (
     <div className="flex flex-col">
-        <Header/>
-        <Hero/>
-        <HowItWorks/>
-        <CryptoCards/>
-        <CryptoCharts/>
-        <NewsSection/>
-        <AboutSection/>
-        <Testimonials/>
-        <CTASection/>
-        <Footer/>
+      <Header />
+      <Hero />
+      <HowItWorks />
+      <CryptoCharts />
+      <CryptoCards />
+      <NewsSection />
+      <AboutSection />
+      <Testimonials />
+      <CTASection />
+      <Footer />
     </div>
   );
 }
 
-export default LandingPage; 
+export default LandingPage;
