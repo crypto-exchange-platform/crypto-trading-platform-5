@@ -82,7 +82,7 @@ export const SignupModal: FC<SignupModalProps> = ({ onClose }) => {
           dateOfBirth: form.birthdate,
           source:
             window.location.hostname === "localhost"
-              ? "landing.salesvault.vc" //change
+              ? "crypto.salesvault.vc"
               : window.location.hostname,
         }
       );
@@ -95,7 +95,10 @@ export const SignupModal: FC<SignupModalProps> = ({ onClose }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 overflow-auto">
       <div className="bg-blue-950 text-black w-full max-w-xl p-6 rounded-md shadow-lg relative">
-        <button onClick={onClose} className="absolute right-4 top-4 text-xl">
+        <button
+          onClick={onClose}
+          className="absolute right-4 top-4 text-xl cursor-pointer"
+        >
           ×
         </button>
         <h2 className="text-2xl font-bold mb-6 text-center text-white">
@@ -105,64 +108,35 @@ export const SignupModal: FC<SignupModalProps> = ({ onClose }) => {
           className="grid grid-cols-1 md:grid-cols-2 gap-4"
           onSubmit={handleSubmit}
         >
-          <input
-            name="firstName"
-            type="text"
-            placeholder="First Name"
-            className="border p-2 rounded"
-            onChange={handleChange}
-          />
-          <input
-            name="lastName"
-            type="text"
-            placeholder="Last Name"
-            className="border p-2 rounded"
-            onChange={handleChange}
-          />
-          <input
-            name="username"
-            type="text"
-            placeholder="Username"
-            className="border p-2 rounded"
-            onChange={handleChange}
-          />
-          <input
-            name="email"
-            type="email"
-            placeholder="Email"
-            className="border p-2 rounded"
-            onChange={handleChange}
-          />
-          <input
-            name="phone"
-            type="tel"
-            placeholder="Phone Number"
-            className="border p-2 rounded"
-            onChange={handleChange}
-          />
-          <input
-            name="birthdate"
-            type="date"
-            className="border p-2 rounded"
-            onChange={handleChange}
-          />
-          <input
-            name="password"
-            type="password"
-            placeholder="Password"
-            className="border p-2 rounded col-span-full"
-            onChange={handleChange}
-          />
-          <input
-            name="language"
-            type="text"
-            placeholder="Language"
-            className="border p-2 rounded"
-            onChange={handleChange}
-          />
+          {[
+            { name: "firstName", placeholder: "First Name" },
+            { name: "lastName", placeholder: "Last Name" },
+            { name: "username", placeholder: "Username" },
+            { name: "email", placeholder: "Email", type: "email" },
+            { name: "phone", placeholder: "Phone Number", type: "tel" },
+            { name: "birthdate", placeholder: "", type: "date" },
+            {
+              name: "password",
+              placeholder: "Password",
+              type: "password",
+              full: true,
+            },
+            { name: "language", placeholder: "Language" },
+          ].map(({ name, placeholder, type = "text", full }) => (
+            <input
+              key={name}
+              name={name}
+              type={type}
+              placeholder={placeholder}
+              className={`border p-2 rounded bg-white text-black ${
+                full ? "col-span-full" : ""
+              }`}
+              onChange={handleChange}
+            />
+          ))}
           <select
             name="dialCode"
-            className="border p-2 rounded"
+            className="border p-2 rounded cursor-pointer bg-white text-black"
             onChange={handleChange}
           >
             <option value="">Dial Code</option>
@@ -174,7 +148,7 @@ export const SignupModal: FC<SignupModalProps> = ({ onClose }) => {
           </select>
           <select
             name="country"
-            className="border p-2 rounded w-full col-span-full"
+            className="border p-2 rounded w-full col-span-full cursor-pointer bg-white text-black"
             onChange={handleChange}
           >
             <option value="">Select Country</option>
@@ -189,7 +163,7 @@ export const SignupModal: FC<SignupModalProps> = ({ onClose }) => {
           )}
           <button
             type="submit"
-            className="w-full bg-black text-white py-2 rounded col-span-full hover:bg-gray-900"
+            className="w-full bg-black text-white py-2 rounded col-span-full hover:bg-gray-900 cursor-pointer"
           >
             Sign Up
           </button>
