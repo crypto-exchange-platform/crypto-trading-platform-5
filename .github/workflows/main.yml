@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 env:
   APP_NAME: 'crypto-trading-platform-5' 
-  DIST_FOLDER: 'build'
+  DIST_FOLDER: 'dist'
 jobs:
   deploy:
     runs-on: ubuntu-latest
