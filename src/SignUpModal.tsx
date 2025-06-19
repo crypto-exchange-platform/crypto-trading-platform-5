@@ -3,13 +3,13 @@ import axios from "axios";
 
 interface SignupModalProps {
   onClose: () => void;
+  onSignupSuccess: () => void;
 }
 
-export const SignupModal: FC<SignupModalProps> = ({ onClose }) => {
-  const [countries, setCountries] = useState([]);
-  const [dialCodes, setDialCodes] = useState([]);
+export const SignupModal: FC<SignupModalProps> = ({ onClose, onSignupSuccess }) => {
+  const [countries, setCountries] = useState<any[]>([]);
+  const [dialCodes, setDialCodes] = useState<any[]>([]);
   const [error, setError] = useState("");
-
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
@@ -34,64 +34,62 @@ export const SignupModal: FC<SignupModalProps> = ({ onClose }) => {
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  ) => setForm({ ...form, [e.target.name]: e.target.value });
 
   const isValidEmail = (email: string) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  const isStrongPassword = (password: string) =>
-    /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=]).{8,}$/.test(password);
+  const isStrongPassword = (pass: string) =>
+    /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=]).{8,}$/.test(pass);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError("");
-
-    const requiredFields = [
-      "firstName",
-      "lastName",
-      "username",
-      "email",
-      "password",
-    ];
-    for (const field of requiredFields) {
-      if (!form[field as keyof typeof form]) {
+    const required = ["firstName", "lastName", "username", "email", "password"];
+    for (const f of required) {
+      if (!form[f as keyof typeof form]) {
         setError("Please fill all required fields.");
         return;
       }
     }
-
     if (!isValidEmail(form.email)) {
-      setError("Please enter a valid email address.");
+      setError("Invalid email");
       return;
     }
-
     if (!isStrongPassword(form.password)) {
       setError(
-        "Password must be at least 8 characters, include a number and a special character."
+        "Password must be 8+ chars, include number & special char"
       );
       return;
     }
-
+    const isoDOB =
+      form.birthdate
+        ? new Date(form.birthdate).toISOString().split("T")[0]
+        : null;
     try {
       await axios.post(
         "https://api.salesvault.vc/identity/api/clients/create-client-via-web",
         {
-          ...form,
+          firstName: form.firstName,
+          lastName: form.lastName,
+          username: form.username,
+          email: form.email,
+          password: form.password,
           telephone: form.dialCode + form.phone,
-          dateOfBirth: form.birthdate,
+          country: form.country || null,
+          language: form.language || null,
+          dateOfBirth: isoDOB,
           source:
             window.location.hostname === "localhost"
-              ? "crypto.salesvault.vc"
+              ? "cryptotrade.salesvault.vc"
               : window.location.hostname,
         }
       );
-      onClose();
+      onClose();           // hide signup
+      onSignupSuccess();   // show login
     } catch (err: any) {
       setError(err.response?.data?.message || "Signup failed.");
     }
-  };
-
+  };  
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 overflow-auto">
       <div className="bg-blue-950 text-black w-full max-w-xl p-6 rounded-md shadow-lg relative">
